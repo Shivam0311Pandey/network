@@ -3,12 +3,27 @@ from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.core.paginator import Paginator
 
-from .models import User
+from .models import User, Post
 
 
 def index(request):
-    return render(request, "network/index.html")
+    if request.method == "POST":
+        postContent = request.POST["content"]
+        post = Post.objects.create(
+            user=request.user,
+            content=postContent
+        )
+        return HttpResponseRedirect(reverse("index"))
+    else:
+        posts = Post.objects.all().order_by("id").reverse()
+        p = Paginator(posts, 10, orphans=0, allow_empty_first_page=True)
+        pageNumber = request.GET.get('page')
+        pageObj = p.get_page(pageNumber)
+        return render(request, "network/index.html", {
+            'page_obj': pageObj
+        })
 
 
 def login_view(request):
@@ -61,3 +76,8 @@ def register(request):
         return HttpResponseRedirect(reverse("index"))
     else:
         return render(request, "network/register.html")
+
+
+def update(request, id):
+    pass
+
