@@ -1,0 +1,46 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+    <h1>Posts</h1>
+    {% for post in page_obj %}
+        <div class="post container-fluid">
+            <a href="{% url 'profile' post.user %}"><h5>{{ post.user }}</h5></a>
+            <div class="content">{{ post.content }}</div>
+            <div class="post-timestamp text-muted">{{ post.timestampOfPost }}</div>
+            {% if user in post.like.all %}
+                <div><i class="bi bi-heart-fill heart " data-id="{{ post.id }}"></i><span class="text-muted count" id="{{ post.id }}">{{ post.like.all.count }}</span></div>
+            {% else %}
+                <div><i class="bi bi-heart heart" data-id="{{ post.id }}" id="like"></i><span class="text-muted count" id="{{ post.id }}">{{ post.like.all.count }}</span></div>
+            {% endif %}
+        </div>
+    {% endfor %}
+
+    <nav aria-label="Page navigation example" id="pagination">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1">&laquo; First</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                </li>
+            {% endif %}
+            <li class="page-item page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages  }}</li>
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last &raquo;</a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+    
+
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'network/index.js' %}"></script>
+{% endblock %}

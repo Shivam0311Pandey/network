@@ -27,14 +27,17 @@ def index(request):
             'page_obj': pageObj
         })
 
+
 @login_required(login_url='/login') 
 def following(request):
     followsUser = request.user.follows.all()
-    posts = Post.objects.filter(user in followsUser).order_by("id").reverse()
-    print(posts)
-    return HttpResponse(status=204)
-
-
+    posts = Post.objects.filter(user__in= followsUser).order_by("id").reverse()
+    p = Paginator(posts, 10, orphans=0, allow_empty_first_page=True)
+    pageNumber = request.GET.get('page')
+    pageObj = p.get_page(pageNumber)
+    return render(request, "network/following.html", {
+        'page_obj': pageObj
+    })
 
 
 def login_view(request):
