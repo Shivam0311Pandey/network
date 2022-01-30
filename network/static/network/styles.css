@@ -32,6 +32,9 @@
 .post{
     margin-bottom: 0.5rem;
 }
+.post a{
+    text-decoration: none;
+}
 .post-timestamp{
     font-size: 0.9rem !important;
 }
